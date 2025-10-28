@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AURA CLUB — Магазин одежды</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="loader-inner">
+      <img src="ava2.png" alt="AURA CLUB" class="preloader-logo" />
+      <h1 class="preloader-text">AURA CLUB</h1>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="navbar">
+    <div class="logo">AURA CLUB</div>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#home" class="active">Главная</a></li>
+        <li><a href="#men">Мужчинам</a></li>
+        <li><a href="#women">Женщинам</a></li>
+        <li><a href="#about">О нас</a></li>
+        <li><a href="#contacts">Контакты</a></li>
+      </ul>
+    </nav>
+    <div class="nav-right">
+      <button id="themeToggle">🌓</button>
+      <div class="cart"><a href="#" id="openCart">🛒</a><span id="cartCount">0</span></div>
+    </div>
+    <div class="burger">☰</div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero fade-on-scroll" id="home">
+    <div class="background">
+      <img src="ava.png" class="bg-left" alt="">
+      <img src="ava2.png" class="bg-right" alt="">
+      <div class="gradient-overlay"></div>
+    </div>
+    <div class="hero-content fade-on-scroll">
+      <h1>AURA CLUB</h1>
+      <p class="fade-on-scroll">Нужна новая энергия в стиле? Добро пожаловать в AURA CLUB.</p>
+      <a href="#men" class="shop-btn fade-on-scroll">Перейти в каталог</a>
+    </div>
+  </section>
+
+  <!-- КАТАЛОГ — МУЖЧИНАМ -->
+  <section class="catalog fade-on-scroll" id="men">
+    <h2>МУЖЧИНАМ</h2>
+    <div class="product-grid">
+      <div class="product fade-on-scroll">
+        <img src="ava6.png" alt="">
+        <h3>Толстовка "Night Vision"</h3>
+        <p class="price">5 990 ₽</p>
+        <button class="addToCart" data-name="Толстовка 'Night Vision'" data-price="5990">В корзину</button>
+      </div>
+      <div class="product fade-on-scroll">
+        <img src="ava7.png" alt="">
+        <h3>Футболка "Urban Core"</h3>
+        <p class="price">2 990 ₽</p>
+        <button class="addToCart" data-name="Футболка 'Urban Core'" data-price="2990">В корзину</button>
+      </div>
+      <div class="product fade-on-scroll">
+        <img src="ava8.png" alt="">
+        <h3>Куртка "Dark Drop"</h3>
+        <p class="price">9 490 ₽</p>
+        <button class="addToCart" data-name="Куртка 'Dark Drop'" data-price="9490">В корзину</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- КАТАЛОГ — ЖЕНЩИНАМ -->
+  <section class="catalog fade-on-scroll" id="women">
+    <h2>ЖЕНЩИНАМ</h2>
+    <div class="product-grid">
+      <div class="product fade-on-scroll">
+        <img src="ava4.png" alt="">
+        <h3>Топ "AURA Fit"</h3>
+        <p class="price">2 490 ₽</p>
+        <button class="addToCart" data-name="Топ 'AURA Fit'" data-price="2490">В корзину</button>
+      </div>
+      <div class="product fade-on-scroll">
+        <img src="ava5.png" alt="">
+        <h3>Худи "Ghost Touch"</h3>
+        <p class="price">5 490 ₽</p>
+        <button class="addToCart" data-name="Худи 'Ghost Touch'" data-price="5490">В корзину</button>
+      </div>
+      <div class="product fade-on-scroll">
+        <img src="ava3.png" alt="">
+        <h3>Кроссовки "Shadow Wave"</h3>
+        <p class="price">7 990 ₽</p>
+        <button class="addToCart" data-name="Кроссовки 'Shadow Wave'" data-price="7990">В корзину</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about fade-on-scroll" id="about">
+    <h2>О БРЕНДЕ</h2>
+    <p>AURA CLUB — независимый бренд уличной одежды. Мы создаём стиль, который чувствуется. Уникальные материалы, минимализм и дерзкая энергия в каждой детали.</p>
+  </section>
+
+  <!-- CONTACTS -->
+  <section class="contacts fade-on-scroll" id="contacts">
+    <h2>СВЯЖИСЬ С НАМИ</h2>
+    <p>📩 <a href="mailto:info@auraclub.ru">info@auraclub.ru</a></p>
+    <p>📱 Telegram: <a href="#">@auraclub</a></p>
+    <p>📷 Instagram: <a href="#">@aura.club</a></p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="fade-on-scroll">
+    <p>© 2025 AURA CLUB. Все права защищены.</p>
+  </footer>
+
+  <!-- CART MODAL -->
+  <div id="cartModal" class="cart-modal hidden">
+    <div class="cart-content">
+      <h3>Корзина</h3>
+      <ul id="cartItems"></ul>
+      <button id="clearCart">Очистить</button>
+      <a href="checkout.html"><button>Оформить заказ</button></a>
+      <button id="closeCart">Закрыть</button>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script>
+    // PRELOADER
+    window.addEventListener('load',()=>{
+      setTimeout(()=>{document.getElementById('preloader').classList.add('hide');},2800);
+    });
+
+    // BURGER MENU
+    const burger=document.querySelector('.burger');
+    const nav=document.querySelector('.nav-links');
+    burger?.addEventListener('click',()=>nav.classList.toggle('active'));
+
+    // THEME
+    const themeToggle=document.getElementById('themeToggle');
+    themeToggle?.addEventListener('click',()=>{
+      document.body.classList.toggle('light');
+      localStorage.setItem('theme',document.body.classList.contains('light')?'light':'dark');
+    });
+    if(localStorage.getItem('theme')==='light') document.body.classList.add('light');
+
+    // CART
+    let cart=JSON.parse(localStorage.getItem('cart'))||[];
+    const updateCartCount=()=>{document.getElementById('cartCount').textContent=cart.length;}
+    const renderCart=()=>{
+      const list=document.getElementById('cartItems');
+      list.innerHTML=cart.map((i,idx)=>`<li>${i.name} — ${i.price} ₽ <button data-idx="${idx}" class="remove">✕</button></li>`).join('');
+      updateCartCount();
+      localStorage.setItem('cart',JSON.stringify(cart));
+    }
+    document.querySelectorAll('.addToCart').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const name=btn.dataset.name, price=btn.dataset.price;
+        cart.push({name,price});
+        renderCart();
+      });
+    });
+    document.getElementById('openCart')?.addEventListener('click',e=>{e.preventDefault();document.getElementById('cartModal').classList.remove('hidden');renderCart();});
+    document.getElementById('closeCart')?.addEventListener('click',()=>{document.getElementById('cartModal').classList.add('hidden');});
+    document.getElementById('clearCart')?.addEventListener('click',()=>{cart=[];renderCart();});
+    document.addEventListener('click',e=>{if(e.target.classList.contains('remove')){cart.splice(e.target.dataset.idx,1);renderCart();}});
+    updateCartCount();
+
+    // FADE ON SCROLL
+    const faders=document.querySelectorAll('.fade-on-scroll');
+    const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target);}})},{threshold:0.2});
+    faders.forEach(f=>observer.observe(f));
+  </script>
+</body>
+</html>

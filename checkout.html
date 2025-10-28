@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AURA CLUB — Оформление заказа</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="navbar">
+    <div class="logo">AURA CLUB</div>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Главная</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- CHECKOUT -->
+  <section class="checkout fade-on-scroll" style="padding:120px 40px; max-width:600px; margin:0 auto;">
+    <h2>Оформление заказа</h2>
+    <p>Проверьте свои товары и заполните форму для заказа.</p>
+    
+    <!-- Список товаров из корзины -->
+    <ul id="checkoutItems" style="margin-bottom:20px;"></ul>
+    <p id="totalPrice" style="font-weight:bold; margin-bottom:20px;"></p>
+
+    <!-- Форма -->
+    <form id="orderForm">
+      <label>Имя:</label><br>
+      <input type="text" id="customerName" required><br>
+
+      <label>Телефон:</label><br>
+      <input type="tel" id="customerPhone" required><br>
+
+      <label>Email:</label><br>
+      <input type="email" id="customerEmail"><br>
+
+      <button type="submit">Отправить заказ</button>
+    </form>
+
+    <p id="confirmation" style="margin-top:20px; color:#0f0;"></p>
+  </section>
+
+  <!-- JS -->
+  <script>
+    // Загрузка корзины
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const checkoutList = document.getElementById('checkoutItems');
+    const totalPriceElem = document.getElementById('totalPrice');
+
+    const renderCheckout = () => {
+      checkoutList.innerHTML = cart.map(item => `<li>${item.name} — ${item.price} ₽</li>`).join('');
+      const total = cart.reduce((sum,item)=>sum+Number(item.price),0);
+      totalPriceElem.textContent = `Итого: ${total} ₽`;
+    }
+    renderCheckout();
+
+    // Отправка формы (локально)
+    const form = document.getElementById('orderForm');
+    const confirmation = document.getElementById('confirmation');
+
+    form.addEventListener('submit', e=>{
+      e.preventDefault();
+      if(cart.length===0){
+        alert('Корзина пуста!');
+        return;
+      }
+      const name = document.getElementById('customerName').value;
+      const phone = document.getElementById('customerPhone').value;
+      const email = document.getElementById('customerEmail').value;
+
+      // Здесь можно добавить отправку на сервер или e-mail
+      console.log('Заказ:', {name, phone, email, cart});
+
+      confirmation.textContent = `Спасибо, ${name}! Ваш заказ принят.`;
+      cart = [];
+      localStorage.setItem('cart', JSON.stringify(cart));
+      renderCheckout();
+      form.reset();
+    });
+
+    // FADE ON SCROLL
+    const faders=document.querySelectorAll('.fade-on-scroll');
+    const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target);}})},{threshold:0.2});
+    faders.forEach(f=>observer.observe(f));
+  </script>
+</body>
+</html>
