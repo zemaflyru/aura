@@ -13,6 +13,9 @@
     <div class="loader-inner">
       <img src="ava2.png" alt="AURA CLUB" class="preloader-logo" />
       <h1 class="preloader-text">AURA CLUB</h1>
+      <div class="neon-lines">
+        <span></span><span></span><span></span>
+      </div>
     </div>
   </div>
 
@@ -26,6 +29,7 @@
         <li><a href="#women">Женщинам</a></li>
         <li><a href="#about">О нас</a></li>
         <li><a href="#contacts">Контакты</a></li>
+        <li><a href="#myOrders">Мои заказы</a></li>
       </ul>
     </nav>
     <div class="nav-right">
@@ -49,7 +53,7 @@
     </div>
   </section>
 
-  <!-- КАТАЛОГ — МУЖЧИНАМ -->
+  <!-- МУЖЧИНАМ -->
   <section class="catalog fade-on-scroll" id="men">
     <h2>МУЖЧИНАМ</h2>
     <div class="product-grid">
@@ -74,7 +78,7 @@
     </div>
   </section>
 
-  <!-- КАТАЛОГ — ЖЕНЩИНАМ -->
+  <!-- ЖЕНЩИНАМ -->
   <section class="catalog fade-on-scroll" id="women">
     <h2>ЖЕНЩИНАМ</h2>
     <div class="product-grid">
@@ -99,19 +103,28 @@
     </div>
   </section>
 
-  <!-- ABOUT -->
+  <!-- О БРЕНДЕ -->
   <section class="about fade-on-scroll" id="about">
     <h2>О БРЕНДЕ</h2>
-    <p>AURA CLUB — независимый бренд уличной одежды. Мы создаём стиль, который чувствуется. Уникальные материалы, минимализм и дерзкая энергия в каждой детали.</p>
+    <p>AURA CLUB — независимый бренд уличной одежды, где стиль встречается с энергией. Каждый элемент создан, чтобы отражать твою индивидуальность.</p>
   </section>
 
-  <!-- CONTACTS -->
+  <!-- КОНТАКТЫ -->
   <section class="contacts fade-on-scroll" id="contacts">
     <h2>СВЯЖИСЬ С НАМИ</h2>
     <p>📩 <a href="mailto:info@auraclub.ru">info@auraclub.ru</a></p>
     <p>📱 Telegram: <a href="#">@auraclub</a></p>
     <p>📷 Instagram: <a href="#">@aura.club</a></p>
   </section>
+
+<!-- МОИ ЗАКАЗЫ -->
+<section class="my-orders fade-on-scroll" id="myOrders" style="padding:80px 40px; max-width:600px; margin:0 auto;">
+  <h2>Мои заказы</h2>
+  <ul id="ordersList" style="margin-top:20px; list-style:none; padding-left:0;"></ul>
+  <p id="noOrders" style="color:#ff9900; font-weight:bold;">У вас пока нет заказов.</p>
+</section>
+
+
 
   <!-- FOOTER -->
   <footer class="fade-on-scroll">
@@ -124,16 +137,17 @@
       <h3>Корзина</h3>
       <ul id="cartItems"></ul>
       <button id="clearCart">Очистить</button>
-      <a href="checkout.html"><button>Оформить заказ</button></a>
+      <a href="checkout.html"><button id="checkoutBtn" class="shop-btn">Оформить заказ</button>
+
+
       <button id="closeCart">Закрыть</button>
     </div>
   </div>
 
-  <!-- JS -->
   <script>
     // PRELOADER
     window.addEventListener('load',()=>{
-      setTimeout(()=>{document.getElementById('preloader').classList.add('hide');},2800);
+      setTimeout(()=>document.getElementById('preloader').classList.add('hide'),3000);
     });
 
     // BURGER MENU
@@ -158,23 +172,28 @@
       updateCartCount();
       localStorage.setItem('cart',JSON.stringify(cart));
     }
-    document.querySelectorAll('.addToCart').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const name=btn.dataset.name, price=btn.dataset.price;
-        cart.push({name,price});
-        renderCart();
-      });
-    });
+    document.querySelectorAll('.addToCart').forEach(btn=>btn.addEventListener('click',()=>{
+      cart.push({name:btn.dataset.name,price:btn.dataset.price});
+      renderCart();
+    }));
     document.getElementById('openCart')?.addEventListener('click',e=>{e.preventDefault();document.getElementById('cartModal').classList.remove('hidden');renderCart();});
-    document.getElementById('closeCart')?.addEventListener('click',()=>{document.getElementById('cartModal').classList.add('hidden');});
+    document.getElementById('closeCart')?.addEventListener('click',()=>document.getElementById('cartModal').classList.add('hidden'));
     document.getElementById('clearCart')?.addEventListener('click',()=>{cart=[];renderCart();});
     document.addEventListener('click',e=>{if(e.target.classList.contains('remove')){cart.splice(e.target.dataset.idx,1);renderCart();}});
     updateCartCount();
 
     // FADE ON SCROLL
     const faders=document.querySelectorAll('.fade-on-scroll');
-    const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target);}})},{threshold:0.2});
+    const observer=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target);}
+      });
+    },{threshold:0.2});
     faders.forEach(f=>observer.observe(f));
   </script>
+  document.getElementById('checkoutBtn')?.addEventListener('click', () => {
+  window.location.href = 'checkout.html';
+});
+
 </body>
 </html>
