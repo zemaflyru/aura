@@ -6,86 +6,215 @@
   <title>AURA CLUB — Оформление заказа</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    form#orderForm { display: flex; flex-direction: column; gap: 20px; }
+    form#orderForm input {
+      padding: 12px 15px;
+      border: 2px solid #ff9900;
+      border-radius: 8px;
+      background: #111;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.3s;
+      box-shadow: 0 0 5px #ff9900 inset;
+    }
+    form#orderForm input:focus {
+      border-color: #00ff88;
+      box-shadow: 0 0 10px #00ff88 inset, 0 0 20px #00ff88;
+    }
+    form#orderForm label { font-weight: bold; color: #ff9900; text-shadow: 0 0 5px #ff4c00; }
+
+    .neon-btn {
+      animation: neonPulse 1.5s infinite alternate;
+      box-shadow: 0 0 5px #ff9900, 0 0 10px #ff4c00, 0 0 15px #ff9900;
+      border-radius: 25px;
+      padding: 12px 25px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: bold;
+    }
+    .neon-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #ff9900, 0 0 20px #ff4c00, 0 0 30px #ff9900;
+    }
+
+    #confirmation {
+      font-weight: bold;
+      font-size: 1.1rem;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: 0.6s ease;
+    }
+    #confirmation.show {
+      opacity: 1;
+      transform: translateY(0);
+      text-shadow: 0 0 15px #00ff88, 0 0 30px #00ff44;
+    }
+  </style>
 </head>
 <body>
-  <!-- HEADER -->
+  <div id="preloader">
+    <div class="loader-inner">
+      <img src="ava2.png" alt="AURA CLUB" class="preloader-logo" />
+      <h1 class="preloader-text">AURA CLUB</h1>
+      <div class="neon-lines"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
   <header class="navbar">
     <div class="logo">AURA CLUB</div>
     <nav>
       <ul class="nav-links">
-        <li><a href="index.html">Главная</a></li>
+        <li><a href="index.html" class="active">Главная</a></li>
       </ul>
     </nav>
   </header>
 
-  <!-- CHECKOUT -->
   <section class="checkout fade-on-scroll" style="padding:120px 40px; max-width:600px; margin:0 auto;">
     <h2>Оформление заказа</h2>
-    <p>Проверьте свои товары и заполните форму для заказа.</p>
-    
-    <!-- Список товаров из корзины -->
+    <p>Проверь свои товары и введи данные для доставки.</p>
     <ul id="checkoutItems" style="margin-bottom:20px;"></ul>
     <p id="totalPrice" style="font-weight:bold; margin-bottom:20px;"></p>
 
-    <!-- Форма -->
     <form id="orderForm">
-      <label>Имя:</label><br>
-      <input type="text" id="customerName" required><br>
-
-      <label>Телефон:</label><br>
-      <input type="tel" id="customerPhone" required><br>
-
-      <label>Email:</label><br>
-      <input type="email" id="customerEmail"><br>
-
-      <button type="submit">Отправить заказ</button>
+      <label>Имя:</label>
+      <input type="text" id="customerName" required placeholder="Введите имя">
+      <label>Телефон:</label>
+      <input type="tel" id="customerPhone" required placeholder="+7 (___) ___-__-__">
+      <label>Email:</label>
+      <input type="email" id="customerEmail" placeholder="example@mail.com">
+      <button type="submit" class="shop-btn neon-btn">Оформить заказ</button>
     </form>
 
-    <p id="confirmation" style="margin-top:20px; color:#0f0;"></p>
+    <div id="confirmation"></div>
+
+    <!-- Вкладка Мои заказы -->
+    <hr style="margin:30px 0; border-color:#ff9900;">
+    <h2>Мои заказы</h2>
+    <p id="noOrders" style="font-weight:bold; color:#ff9900;">У вас пока нет заказов.</p>
+    <ul id="ordersList" style="list-style:none; padding-left:0;"></ul>
   </section>
 
-  <!-- JS -->
   <script>
-    // Загрузка корзины
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const checkoutList = document.getElementById('checkoutItems');
-    const totalPriceElem = document.getElementById('totalPrice');
+  window.addEventListener('load', ()=>{ setTimeout(()=>document.getElementById('preloader').classList.add('hide'),3000); });
 
-    const renderCheckout = () => {
-      checkoutList.innerHTML = cart.map(item => `<li>${item.name} — ${item.price} ₽</li>`).join('');
-      const total = cart.reduce((sum,item)=>sum+Number(item.price),0);
-      totalPriceElem.textContent = `Итого: ${total} ₽`;
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const checkoutList = document.getElementById('checkoutItems');
+  const totalPriceElem = document.getElementById('totalPrice');
+  const form = document.getElementById('orderForm');
+  const confirmation = document.getElementById('confirmation');
+
+  const renderCheckout = () => {
+    checkoutList.innerHTML = cart.map(i => `<li>${i.name} — ${i.price} ₽</li>`).join('');
+    const total = cart.reduce((sum,i)=>sum+Number(i.price),0);
+    totalPriceElem.textContent = `Итого: ${total} ₽`;
+  };
+  renderCheckout();
+
+  // 🔹 Генерация трек-номера формата XXXX-XXXX-XXXX
+  function generateTrackNumber() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let track = '';
+    for (let i = 0; i < 12; i++) {
+      track += chars[Math.floor(Math.random() * chars.length)];
     }
-    renderCheckout();
+    return track.match(/.{1,4}/g).join('-');
+  }
 
-    // Отправка формы (локально)
-    const form = document.getElementById('orderForm');
-    const confirmation = document.getElementById('confirmation');
+  // 🔹 Функция отображения заказов
+  function renderOrders() {
+    const ordersList = document.getElementById('ordersList');
+    const noOrders = document.getElementById('noOrders');
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
 
-    form.addEventListener('submit', e=>{
-      e.preventDefault();
-      if(cart.length===0){
-        alert('Корзина пуста!');
-        return;
-      }
-      const name = document.getElementById('customerName').value;
-      const phone = document.getElementById('customerPhone').value;
-      const email = document.getElementById('customerEmail').value;
+    if (orders.length === 0) {
+      noOrders.style.display = 'block';
+      ordersList.innerHTML = '';
+      return;
+    }
 
-      // Здесь можно добавить отправку на сервер или e-mail
-      console.log('Заказ:', {name, phone, email, cart});
+    noOrders.style.display = 'none';
+    ordersList.innerHTML = orders.map((order, idx) => `
+      <li style="background:#111;border:2px solid #ff9900;border-radius:10px;padding:15px;margin-bottom:15px;">
+        <b>Дата:</b> ${order.date}<br>
+        <b>Имя:</b> ${order.name}<br>
+        <b>Телефон:</b> ${order.phone}<br>
+        <b>Email:</b> ${order.email || '-'}<br>
+        <b>Товары:</b>
+        <ul style="margin-left:15px;">
+          ${order.cart.map(i => `<li>${i.name} — ${i.price} ₽</li>`).join('')}
+        </ul>
+        <b>Итого:</b> ${order.total} ₽<br>
+        <b>Трек-номер:</b> <code>${order.trackNumber}</code><br>
+        <button data-idx="${idx}" class="deleteOrder" style="margin-top:10px; padding:5px 10px; border:none; border-radius:5px; background:#ff4c00; color:#fff; cursor:pointer;">Удалить</button>
+      </li>
+    `).join('');
 
-      confirmation.textContent = `Спасибо, ${name}! Ваш заказ принят.`;
+    document.querySelectorAll('.deleteOrder').forEach(btn => {
+      btn.addEventListener('click', () => {
+        orders.splice(btn.dataset.idx, 1);
+        localStorage.setItem('orders', JSON.stringify(orders));
+        renderOrders();
+      });
+    });
+  }
+
+  renderOrders();
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if(cart.length === 0){ alert('Корзина пуста!'); return; }
+
+    const name = document.getElementById('customerName').value;
+    const phone = document.getElementById('customerPhone').value;
+    const email = document.getElementById('customerEmail').value;
+    const total = cart.reduce((sum,i)=>sum+Number(i.price),0);
+
+    const trackNumber = generateTrackNumber();
+
+    try {
+      const response = await fetch('http://localhost:3000/send-order', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ name, phone, email, cart, total })
+      });
+      const data = await response.json();
+
+      // Показываем пользователю трек-номер
+      confirmation.innerHTML = `✅ Спасибо, ${name}! Ваш заказ принят.<br>📦 Трек-номер: <b>${data.trackNumber}</b>`;
+      confirmation.classList.add('show');
+
+      // Сохраняем заказ в localStorage
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      orders.push({ name, phone, email, cart, total, trackNumber: data.trackNumber, date: new Date().toLocaleString() });
+      localStorage.setItem('orders', JSON.stringify(orders));
+
       cart = [];
       localStorage.setItem('cart', JSON.stringify(cart));
       renderCheckout();
       form.reset();
-    });
+      renderOrders(); // обновляем список заказов
 
-    // FADE ON SCROLL
-    const faders=document.querySelectorAll('.fade-on-scroll');
-    const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target);}})},{threshold:0.2});
-    faders.forEach(f=>observer.observe(f));
+      setTimeout(()=>confirmation.classList.remove('show'),8000);
+    } catch (err) {
+      console.error(err);
+      alert('Ошибка при отправке заказа. Попробуйте позже.');
+    }
+  });
+
+  // FADE ON SCROLL
+  const faders = document.querySelectorAll('.fade-on-scroll');
+  const observer = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.2});
+  faders.forEach(f=>observer.observe(f));
   </script>
 </body>
 </html>
